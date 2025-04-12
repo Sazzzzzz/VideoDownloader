@@ -5,8 +5,6 @@ from typing import Any
 from yt_dlp import YoutubeDL  # type: ignore
 from typing import Literal, TypedDict
 
-example_url = ["https://www.bilibili.com/bangumi/play/ss73355"]
-
 
 class Config(TypedDict):
     max_retries: int
@@ -20,7 +18,7 @@ class DownloadTask:
         self,
         url: str,
         ytdlp_options: dict,
-        priority: Literal[1, 2, 3, 4, 5],
+        priority: Literal[1, 2, 3, 4, 5] = 3,
     ) -> None:
         self.url = url
         self.ytdlp_options: dict = ytdlp_options
@@ -42,8 +40,6 @@ class Processor:
                         info_result, dict
                     ), "Expected info to be a dictionary"
                     info: dict[str, Any] = info_result
-                    video_id = info.get("id", "video")
-                    title = info.get("title", "video")
                     return None
             except Exception as e:
                 failure_count += 1
@@ -61,12 +57,28 @@ class DownloadManager:
 # cSpell: disable
 example_download_options = {
     "format": "bestvideo+bestaudio",  # Get best quality
-    "outtmpl": "%(id)s.%(ext)s",  # Simple filename for processing
-    "cookiesfrombrowser": ("firefox",),
+    "outtmpl": "%(title)s.%(ext)s",  # Simple filename for processing
+    "cookiesfrombrowser": ("edge",),
     "merge_output_format": "mp4",  # Just merge the streams
     "postprocessors": [],  # No post-processing yet
+    "paths": {
+        # "home": "/media/Saz/Backup/MediaStorage/TheBigBangTheory",    # Specified directory
+        "temp": os.path.join(os.getcwd(), "download/"),  # Current dir under download/
+    },
 }
 
 example_config: Config = {
     "max_retries": 3,
 }
+
+example_url = [
+    "https://www.youtube.com/watch?v=vTCImFO_m9A",
+    # "https://www.bilibili.com/bangumi/play/ss73355",
+]
+
+task_list = map(lambda url: DownloadTask(url, example_download_options), example_url)
+for task in task_list:
+    print(f"Processing URL: {task.url}")
+    processor = Processor(example_config)
+    processor.download(task)
+    print(f"Finished processing URL: {task.url}")
