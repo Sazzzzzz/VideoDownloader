@@ -3,3 +3,4 @@
 .mypy_cache
 develop_reference/
 download/
+config.json
