@@ -52,6 +52,13 @@ class Processor:
                 sleep(wait_time)
                 if failure_count >= max_retries:
                     print("Max retries reached. Exiting.")
+        else:
+            print("Download failed after max retries.")
+            files = os.listdir(task.ytdlp_options["paths"]["temp"])
+            for file in files:
+                os.remove(os.path.join(task.ytdlp_options["paths"]["temp"], file))
+            print("Removed partial files.")
+            return None
 
 
 class DownloadManager:
@@ -111,6 +118,7 @@ for example in example_url:
 t1 = time()
 manager = DownloadManager(example_config)
 manager.task_list = task_list
-manager.download()
+for _ in range(2):
+    manager.download()
 t2 = time()
 print(f"Total time taken: {t2-t1} seconds")
