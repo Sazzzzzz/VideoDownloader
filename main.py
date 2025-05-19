@@ -93,32 +93,13 @@ with open("config.json", "r") as f:
 print(example_config["max_retries"])
 
 example_url = [
-    # "https://www.youtube.com/watch?v=vTCImFO_m9A",
-    ("https://www.bilibili.com/bangumi/play/ss73355", "S01"),
-    ("https://www.bilibili.com/bangumi/play/ss74816", "S02"),
-    ("https://www.bilibili.com/bangumi/play/ss74817", "S03"),
-    ("https://www.bilibili.com/bangumi/play/ss74818", "S04"),
-    ("https://www.bilibili.com/bangumi/play/ss74820", "S05"),
-    ("https://www.bilibili.com/bangumi/play/ss74821", "S06"),
-    ("https://www.bilibili.com/bangumi/play/ss74822", "S07"),
-    ("https://www.bilibili.com/bangumi/play/ss74823", "S08"),
-    ("https://www.bilibili.com/bangumi/play/ss74824", "S09"),
-    ("https://www.bilibili.com/bangumi/play/ss74826", "S10"),
-    ("https://www.bilibili.com/bangumi/play/ss74827", "S11"),
-    ("https://www.bilibili.com/bangumi/play/ss74828", "S12"),
+    "https://www.bilibili.com/video/BV18wLUzgE23/",
+    # "https://www.bilibili.com/bangumi/play/ss73355",
 ]
 
-task_list: list[DownloadTask] = []
-for example in example_url:
-    url, season = example
-    option = deepcopy(example_download_options)
-    option["paths"]["home"] = option["paths"]["home"] + "/" + season
-    task_list.append(DownloadTask(url, option))
-
-t1 = time()
-manager = DownloadManager(example_config)
-manager.task_list = task_list
-for _ in range(2):
-    manager.download()
-t2 = time()
-print(f"Total time taken: {t2-t1} seconds")
+task_list = map(lambda url: DownloadTask(url, example_download_options), example_url)
+for task in task_list:
+    print(f"Processing URL: {task.url}")
+    processor = Processor(example_config)
+    processor.download(task)
+    print(f"Finished processing URL: {task.url}")
