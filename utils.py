@@ -4,7 +4,6 @@ from yt_dlp.utils import DateRange  # type: ignore
 
 class ImpersonateTarget:
     """Placeholder for the ImpersonateTarget class from yt_dlp.networking.impersonate"""
-
     pass
 
 
